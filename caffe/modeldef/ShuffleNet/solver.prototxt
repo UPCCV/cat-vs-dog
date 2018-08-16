@@ -1,0 +1,14 @@
+net: "modeldef/ShuffleNet/train_val.prototxt"
+test_iter: 100
+test_interval: 500
+display: 100
+base_lr: 0.01
+lr_policy: "poly"
+power: 1.0
+max_iter: 100000
+momentum: 0.9
+weight_decay: 0.0001
+snapshot: 10000
+snapshot_prefix: "trainedmodels/shuffluenet"
+solver_mode: GPU
+iter_size: 4

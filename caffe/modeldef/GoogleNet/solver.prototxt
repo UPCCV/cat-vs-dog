@@ -1,0 +1,14 @@
+net: "modeldef/GoogleNet/train_val_img.prototxt"
+test_iter: 250
+test_interval: 500
+display: 100
+base_lr: 0.001
+lr_policy: "step"
+stepsize: 10000
+gamma: 0.1
+momentum: 0.9
+weight_decay: 1e-05
+max_iter: 40000
+snapshot: 10000
+snapshot_prefix: "trainedmodels/GoogelNet"
+solver_mode: GPU

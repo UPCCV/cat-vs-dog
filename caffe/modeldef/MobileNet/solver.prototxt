@@ -1,0 +1,15 @@
+net: "modeldef/MobileNet/train_val.prototxt"
+#test_initialization: false
+test_iter: 100
+test_interval: 500
+display: 100
+#average_loss: 20
+base_lr: 0.1
+lr_policy: "poly"
+power: 1.0
+max_iter: 50000
+momentum: 0.9
+weight_decay: 0.0001
+snapshot: 5000
+solver_mode: GPU
+snapshot_prefix: "trainedmodels/MobileNet"

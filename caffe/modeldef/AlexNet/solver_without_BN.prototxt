@@ -1,0 +1,14 @@
+net: "modeldef/AlexNet/train_val_BN.prototxt"
+test_iter: 25
+test_interval: 500
+base_lr: 0.0001
+lr_policy: "step"
+gamma: 0.1
+stepsize: 4000
+display: 100
+max_iter: 10000
+momentum: 0.9
+weight_decay: 0.0005
+snapshot: 1000
+snapshot_prefix: "trainedmodels/AlexNet"
+solver_mode: GPU
