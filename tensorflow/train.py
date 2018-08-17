@@ -58,7 +58,6 @@ def load_test_batch():
     image_batch, label_batch = tf.train.batch([image, label], batch_size=BATCH_SIZE, capacity=100,num_threads=4)
     return image_batch,label_batch
 
-
 def AlexNet(inputs,n_classes=2):
     with slim.arg_scope([slim.conv2d,slim.fully_connected],
                             activation_fn=tf.nn.relu,
@@ -224,15 +223,15 @@ def load_graph(model_file):
     with open(model_file, "rb") as f:
         graph_def.ParseFromString(f.read())
     with graph.as_default():
-        tf.import_graph_def(graph_def)
+        tf.import_graph_def(graph_def,name='')
     return graph
 
 def load_pb_test():
     imgpath = "../data/train/cat.0.jpg"
     graph=load_graph("models/frozen_model.pb")
-    images = graph.get_tensor_by_name("import/image_tensor:0")
-    keep_prob = graph.get_tensor_by_name("import/keep_prob:0")
-    logits = graph.get_tensor_by_name("import/vgg_19/fc8/squeezed:0")
+    images = graph.get_tensor_by_name("image_tensor:0")
+    keep_prob = graph.get_tensor_by_name("keep_prob:0")
+    logits = graph.get_tensor_by_name("vgg_19/fc8/squeezed:0")
     with tf.Session(graph=graph)as sess:
         img=convert_img_to_tensor(sess,imgpath)
         p=sess.run([logits],feed_dict={images:img,keep_prob:1.0})
@@ -240,7 +239,7 @@ def load_pb_test():
 
 if __name__=="__main__":
     #train()
-    evaluate()
+    #evaluate()
     #test()
     #freeze_graph()
-    #load_pb_test()
+    load_pb_test()
