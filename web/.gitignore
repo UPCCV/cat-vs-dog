@@ -1,0 +1,3 @@
+data/
+uploads/*.png
+models/*.h5

@@ -1,9 +1,11 @@
+import os
+import numpy as np
 import tensorflow as tf
 import tensorflow.contrib.slim as slim
 import tensorflow.contrib.slim.nets as nets
 from tensorflow.python.framework import graph_util
-import os
-import numpy as np
+
+os.environ['CUDA_VISIBLE_DEVICES'] = '0'
 
 VGG_19_MODEL_DIR = 'models/vgg_19.ckpt'
 BATCH_SIZE = 32
@@ -12,6 +14,7 @@ CLASSES=2
 EPOCHES=10
 
 MODEL_PREFIX="models/vgg19.ckpt"
+
 
 def get_files(dir="../data/train"):
     files=os.listdir(dir)
@@ -238,8 +241,8 @@ def load_pb_test():
         print(p)
 
 if __name__=="__main__":
-    #train()
+    train()
     #evaluate()
     #test()
     #freeze_graph()
-    load_pb_test()
+    #load_pb_test()

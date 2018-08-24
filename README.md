@@ -68,11 +68,55 @@ ShuffleNet | 93.70 |98.70% |
 
 tensorflow使用预训练的VGG19进行微调，精度为96%+
 
+	python train_vgg19.py
+
+如果有多块GPU，可以使用
+
+	python multigpu_train.py
+
+加速训练
+
+如果配备了Intel的计算棒，可以将其转换为graph格式，然后运行
+
+	sh build.sh #编译所必须的程式
+	sh train.sh #训练和导出模型
+	sh ncs.sh #转换为计算棒需要的格式
+	python run_ncs.py #在计算棒上测试
+
 ## keras
 
 keras需要先把猫和狗的图片分到两个不同的文件夹下，这可以通过train.py中的mklink函数完成.
 
+![](https://i.imgur.com/lQXG8vC.jpg)
+
+	python train.py #训练模型
+	python keras2tf.py #转换为tnsorflow格式
+
+经测试所能达到的精度如下:
+
+Model |	Size |	Accuracy
+--- | --- | --- | --- | --- 
+VGG16 |	528MB |	
+ResNet50 |	99MB |	99.78%
+InceptionV3 |	92MB |	
+Xception |	88MB |	
+InceptionResNetV2 |	215MB |	
+
 ![](https://i.imgur.com/xn47OvN.jpg)
+
+## web by flask
+
+	python app.py
+
+打开浏览器，输入网址http://localhost:5000/
+
+点击Choose...选择要识别的文件上传即可，稍等片刻即可得到结果
+
+
+![](https://i.imgur.com/wBA6uuh.jpg)
+
+![](https://i.imgur.com/plU8eue.jpg)
+
 ## 参考
 
 [基于TensorFlow的Cats vs. Dogs（猫狗大战）实现和详解](https://blog.csdn.net/qq_16137569/article/details/72802387)
@@ -84,3 +128,7 @@ keras需要先把猫和狗的图片分到两个不同的文件夹下，这可以
 [keras-cats-dogs-tutorial](https://github.com/jkjung-avt/keras-cats-dogs-tutorial)
 
 [利用resnet 做kaggle猫狗大战图像识别，秒上98准确率](https://blog.csdn.net/shizhengxin123/article/details/72473245)
+
+[keras-cats-dogs-tutorial](https://github.com/jkjung-avt/keras-cats-dogs-tutorial)
+
+[Building powerful image classification models using very little data](https://blog.keras.io/building-powerful-image-classification-models-using-very-little-data.html)
