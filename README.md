@@ -1,6 +1,6 @@
 # cats vs dogs 猫狗大战 主流平台实现
 
-This is hte solution of Kaggle cats vs dogs by caffe,tensorflow and keras.
+This is the solution of Kaggle cats vs dogs by caffe,tensorflow and keras.
 
 猫狗大战是深度学习应用于计算机视觉的一个典型案例，源于[Kaggle比赛](https://www.kaggle.com/c/dogs-vs-cats)，它一共有25000张训练图片(猫和狗各12500张)![](https://i.imgur.com/v7E4fut.jpg)
 
@@ -44,6 +44,7 @@ This is hte solution of Kaggle cats vs dogs by caffe,tensorflow and keras.
 调整需要使用的模型及其对应的参数，一键完成训练.
 
 目前能够达到的精度如下:
+
 
 Name| Acc. test | finetuned Acc. test. | Train time | Forward pass time | On disk model size | Year | Paper
 ------------------ | --- | --- | --- | --- | --- | --- | ---
@@ -94,8 +95,9 @@ keras需要先把猫和狗的图片分到两个不同的文件夹下，这可以
 
 经测试所能达到的精度如下:
 
+
 Model |	Size |	Accuracy
---- | --- | --- | --- | --- 
+--- | --- | --- 
 VGG16 |	528MB |	
 ResNet50 |	99MB |	99.78%
 InceptionV3 |	92MB |	
