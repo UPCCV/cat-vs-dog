@@ -42,18 +42,6 @@ def crop_generator(batches, crop_length):
             batch_crops[i] = random_crop(batch_x[i], (crop_length, crop_length))
         yield (batch_crops, batch_y)
 
-def mklink():
-    train_dir="../data/train"
-    files=os.listdir(train_dir)
-    train_cat=filter(lambda x:x[:3]=="cat",files)
-    train_dog=filter(lambda x:x[:3]=="dog",files)
-    for file in train_cat:
-        #os.syslink(train_dir+"/"+file,"train2/cat/"+file)
-        shutil.copyfile(train_dir+"/"+file,"../data/train2/cat/"+file)
-    for file in train_dog:
-        #os.syslink(train_dir+"/"+file,"train2/dog/"+file)
-        shutil.copyfile(train_dir+"/"+file,"../data/train2/dog/"+file)
-
 def simple_net():
     model=Sequential()
     model.add(Convolution2D(4,5,5,input_shape=(224,224,3)))
@@ -138,7 +126,6 @@ def test_one_image(imgpath="../data/train/cat.0.jpg"):
         print('    {:.3f}  {}'.format(pred[i], cls_list[i]))
 
 if __name__=="__main__":
-    #mklink()
     train()
     evaluate()
     test_one_image()

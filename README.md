@@ -26,6 +26,17 @@ This is the solution of Kaggle cats vs dogs by caffe,tensorflow and keras.
 然后去[Kaggle下载页面](https://www.kaggle.com/c/dogs-vs-cats/data)下载，解压train.zip到data文件夹，文件结构组织为:
 ![](https://i.imgur.com/NpdKPKs.jpg)
 
+## 数据清洗
+
+官网下载的数据存在异常数据，大致可分为图中无目标(15张),猫狗都有(15张)，卡通图(6张),难以区分(28张)和标注反了(7张)等几大类.
+
+	cd Keras
+	python filtererrors.py
+
+![](https://i.imgur.com/BqpIVsh.jpg)
+
+经过这个过程处理后图片数量由25000张缩减到24936张.
+
 ## caffe
 
 首先安装caffe，网上已有很多相关教程，数不赘述。
@@ -134,3 +145,5 @@ InceptionResNetV2 |	215MB |
 [keras-cats-dogs-tutorial](https://github.com/jkjung-avt/keras-cats-dogs-tutorial)
 
 [Building powerful image classification models using very little data](https://blog.keras.io/building-powerful-image-classification-models-using-very-little-data.html)
+
+[基于Android和微信小程序端的猫狗图像分类](https://github.com/wlkdb/dogs_vs_cats)

@@ -5,7 +5,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{66e55ea6-e9fe-41e2-9648-0894cada2385}</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>train.py</StartupFile>
+    <StartupFile>filtererrors.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
@@ -27,6 +27,9 @@
     <InterpreterReference Include="{9a7a9026-48c1-4688-9d5d-e5699d47d074}\3.5" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="filtererrors.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="keras2tf.py" />
     <Compile Include="train.py" />
   </ItemGroup>
