@@ -1,0 +1,17 @@
+train_net: "./train.prototxt"
+test_net: "./val.prototxt"
+test_iter: 156
+test_interval: 1000
+base_lr: 0.001
+display: 1000
+max_iter: 500000
+lr_policy: "poly"
+gamma: 0.9
+power: 1
+momentum: 0.9
+weight_decay: 0.0005
+stepsize: 100000
+snapshot: 10000
+snapshot_prefix: "trainedmodels/"
+solver_mode: GPU
+type: "SGD"

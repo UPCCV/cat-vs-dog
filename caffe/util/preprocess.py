@@ -2,17 +2,17 @@
 from random import shuffle
 
 def get_files_by_category(args,set):
-    datadir=args.datadir+"/"+set
+    datadir=args.datadir#+"/"+set
     print("loading data from "+datadir+":")
-    file=open("../util/"+set+".txt","w");
-    categoryfile=open("../modeldef/labels.txt",'w')
+    file=open("util/"+set+".txt","w");
+    categoryfile=open("modeldef/labels.txt",'w')
     subdirs=os.listdir(datadir)
     classindex=0
     paths=[]
     categorys=[]
     for subdir in subdirs:
         if(os.path.isdir(datadir+"/"+subdir)):
-            categorys.append(str(classindex)+" "+subdir+"\n")
+            categorys.append(str(classindex)+" "+subdir)
             files=os.listdir(datadir+"/"+subdir)
             files=[file for file in files]
             random.shuffle(files)
@@ -21,7 +21,10 @@ def get_files_by_category(args,set):
                 paths.append(subdir+"/"+f+" "+str(classindex)+"\n")
             classindex=classindex+1
     for category in categorys:
-        categoryfile.write(category)
+        if category==categorys[1]:
+            categoryfile.write(category)
+        else:
+            categoryfile.write(category+"\n")
     random.shuffle(paths)
     print("writing to "+set+".txt")
     for path in paths:
@@ -29,7 +32,7 @@ def get_files_by_category(args,set):
     print(len(paths))
 
 def get_datasets(args):
-    sets=["train","test"]
+    sets=["train","val"]
     for set in sets:
         get_files_by_category(args,set)
     print("generate_txt4lmdb Done")
@@ -40,7 +43,7 @@ def get_files(args):
     lines=[]
     for file in files:
         items=file.split(".")
-        path="data/train/"+file
+        path=file#"data/train/"+
         if items[0]=="cat":
             line=path+" 0"
         else:
