@@ -17,7 +17,8 @@ class AlexNet(nn.Module):
         return self.model(x)
 
 if __name__=="__main__":
-    mrnet = AlexNet()
+    net = AlexNet()
+    print(net.parameters())
     device = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
-    mrnet.to(device)
-    print(summary(mrnet,(3,224,224)))
+    net.to(device)
+    print(summary(net,(3,224,224)))

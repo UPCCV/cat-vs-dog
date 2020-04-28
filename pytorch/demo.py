@@ -31,7 +31,7 @@ def get_args():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--use_gpu",type=bool,default=True,help='an integer for the accumulator')
     parser.add_argument("--image_dir",type=str,default="../data/test1")
-    parser.add_argument("--image_path",type=str,default="../data/test1/1.jpg")
+    parser.add_argument("--image_path",type=str,default="data/5.jpg")
     parser.add_argument("--load_model_path",type=str,default=None)
     parser.add_argument("--model",type=str,default="MnasNet",choices=["MRNet","ResNet50","SqueezeNet","MnasNet"])
     return parser.parse_args()
@@ -51,6 +51,11 @@ def test_dir(model, device, dir):
     for file in tqdm(files):
         imgpath = dir+'/'+file
         test_image(model,device, imgpath)
+def export_model(model):
+    example = torch.rand(1, 3, 224, 224)
+    traced_script_module = torch.jit.trace(model, example)
+    output = traced_script_module(torch.ones(1, 3, 224, 224))
+    traced_script_module.save("./mnasnet_dogcat.pt")
 
 @torch.no_grad()
 def demo():
@@ -61,13 +66,13 @@ def demo():
     if not args.load_model_path:
         print("No pretrained model found")
         return
-    m1 = torch.load(args.load_model_path)
-    model.load_state_dict(torch.load(args.load_model_path))
+    model.load_state_dict(torch.load(args.load_model_path,map_location=torch.device('cpu')))
     device = torch.device('cpu')
-    if args.use_gpu:
+    if torch.cuda.is_available() and args.use_gpu:
         device = torch.device('cuda')
     model.to(device)
     model.eval()
+    #export_model(model)
     test_image(model, device, args.image_path)
     #test_dir(model, device, args.image_dir)
 

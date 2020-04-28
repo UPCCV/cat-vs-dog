@@ -17,7 +17,10 @@ class MnasNet(nn.Module):
         return self.model(x)
 
 if __name__=="__main__":
-    mrnet = MnasNet()
+    net = MnasNet()
+    params = list(net.parameters())
+    for param in params:
+        print(param.size())
     device = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
-    mrnet.to(device)
-    print(summary(mrnet,(3,224,224)))
+    net.to(device)
+    #print(summary(net,(3,224,224)))
