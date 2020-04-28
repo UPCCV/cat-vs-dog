@@ -1,37 +1,42 @@
 from torch import nn
 from torchsummary import summary
 import torch
+import math
+import torch.nn.functional as F
 
 class MRNet(nn.Module):
 
     def __init__(self, num_classes = 2):
         super(MRNet,self).__init__()
         self.model_name = "MRNet"
-        self.features = nn.Sequential(
-            nn.Conv2d(3,16,kernel_size=11,stride=4,padding=2),
-            nn.ReLU(inplace=True),
-            nn.MaxPool2d(kernel_size=3,stride=2),
-            nn.Conv2d(16,32,kernel_size=3,padding=2),
-            nn.ReLU(inplace=True),
-            nn.MaxPool2d(kernel_size=3,stride=2),
-            nn.Conv2d(32,64,kernel_size=3,padding=2),
-            nn.ReLU(inplace=True),
-            nn.MaxPool2d(kernel_size=3,stride=2),
-            nn.Conv2d(64,128,kernel_size=3,padding=2),
-            nn.ReLU(inplace=True),
-            nn.MaxPool2d(kernel_size=3,stride=2)
-        )
-        self.classifier = nn.Sequential(
-            nn.Linear(2048,num_classes)
-        )
+        self.conv1 = nn.Conv2d(3,6,3)
+        self.conv2 = nn.Conv2d(6,16,3)
+        self.conv3 = nn.Conv2d(16,24,3)
+        self.conv4 = nn.Conv2d(24,32,3)
+        self.conv5 = nn.Conv2d(32,64,3)
+        self.conv6 = nn.Conv2d(64,128,3)
+        self.fc = nn.Linear(128,num_classes)
+    
     def forward(self,x):
-        x = self.features(x)
-        x = x.view(x.size(0),-1)
-        x = self.classifier(x)
+        x = F.max_pool2d(F.relu(self.conv1(x)),2)
+        x = F.max_pool2d(F.relu(self.conv2(x)),2)
+        x = F.max_pool2d(F.relu(self.conv3(x)),2)
+        x = F.max_pool2d(F.relu(self.conv4(x)),2)
+        x = F.max_pool2d(F.relu(self.conv5(x)),2)
+        x = F.max_pool2d(F.relu(self.conv6(x)),2)
+        x = x.view(-1,self.num_flat_features(x))
+        x = self.fc(x)
         return x
 
+    def num_flat_features(self,x):
+        size = x.size()[1:]
+        num_features = 1
+        for s in size:
+            num_features*=s
+        return num_features
+
 if __name__=="__main__":
-    mrnet = MRNet()
+    net = MRNet()
     device = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
-    mrnet.to(device)
-    print(summary(mrnet,(3,224,224)))
+    net.to(device)
+    print(summary(net,(3,224,224)))

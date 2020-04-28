@@ -8,6 +8,7 @@ import numpy as np
 from torchvision import transforms
 from tqdm import tqdm
 import models
+from utils.util import get_args,get_lastest_model
 
 CLASSES=['cat','dog']
 
@@ -18,23 +19,6 @@ transformsImage = transforms.Compose([
         transforms.ToTensor(),
         transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
     ])
-
-def get_lastest_model(modeldir="checkpoints"):
-    files = os.listdir(modeldir)
-    if len(files)==0:
-        return None
-    files.sort(key=lambda fn:os.path.getmtime(modeldir + "/" + fn))
-    lastest = os.path.join(modeldir,files[-1])
-    return lastest
-
-def get_args():
-    parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--use_gpu",type=bool,default=True,help='an integer for the accumulator')
-    parser.add_argument("--image_dir",type=str,default="../data/test1")
-    parser.add_argument("--image_path",type=str,default="data/5.jpg")
-    parser.add_argument("--load_model_path",type=str,default=None)
-    parser.add_argument("--model",type=str,default="MnasNet",choices=["MRNet","ResNet50","SqueezeNet","MnasNet"])
-    return parser.parse_args()
 
 def test_image(model, device, imgpath):
     img = cv2.imread(imgpath)

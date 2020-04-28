@@ -10,13 +10,13 @@ class SqueezeNet(nn.Module):
         model = models.squeezenet1_0(pretrained=True)
         for param in model.parameters():
             param.requires_grad = False
-        model.fc = nn.Linear(2048,2)
+        model.classifier[-3] = nn.Conv2d(model.classifier[-3].in_channels,num_classes,kernel_size=1)
         self.model = model        
     def forward(self,x):
         return self.model(x)
 
 if __name__=="__main__":
-    mrnet = SqueezeNet()
+    net = SqueezeNet()
     device = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
-    mrnet.to(device)
-    print(summary(mrnet,(3,224,224)))
+    net.to(device)
+    print(summary(net,(3,224,224)))

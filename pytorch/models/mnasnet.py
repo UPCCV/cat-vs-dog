@@ -10,7 +10,8 @@ class MnasNet(nn.Module):
         model = models.mnasnet0_5(pretrained=True)
         for param in model.parameters():
             param.requires_grad = True
-        model.classifier[-1] = nn.Linear(1280,2)
+        model.classifier[-1] = nn.Linear(model.classifier[-1].in_features,num_classes)
+        model.num_classes=num_classes
         self.model = model
         
     def forward(self,x):
@@ -18,9 +19,6 @@ class MnasNet(nn.Module):
 
 if __name__=="__main__":
     net = MnasNet()
-    params = list(net.parameters())
-    for param in params:
-        print(param.size())
     device = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
     net.to(device)
-    #print(summary(net,(3,224,224)))
+    print(summary(net,(3,224,224)))

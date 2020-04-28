@@ -10,7 +10,7 @@ class AlexNet(nn.Module):
         model = models.alexnet(pretrained=True)
         for param in model.parameters():
             param.requires_grad = False
-        model.classifier[-1] = nn.Linear(4096,2)
+        model.classifier[-1] = nn.Linear(model.classifier[-1].in_features,num_classes)
         self.model = model
 
     def forward(self,x):
@@ -18,7 +18,6 @@ class AlexNet(nn.Module):
 
 if __name__=="__main__":
     net = AlexNet()
-    print(net.parameters())
     device = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
     net.to(device)
     print(summary(net,(3,224,224)))

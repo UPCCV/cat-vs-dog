@@ -6,10 +6,11 @@ import torch
 from torch.utils.data import DataLoader
 from torchnet import meter
 from tqdm import tqdm
-from config import opt
 import datasets
 import models
 from utils.util import accuracy,get_lastest_model,get_args
+from utils.config import opt
+from utils.focalloss import FocalLoss
 
 def train(args):
     # step0: parse config
@@ -20,23 +21,27 @@ def train(args):
     print(opt.model)
     model = getattr(models,opt.model)()
     if opt.load_model_path is None:
-        opt.load_model_path = get_lastest_model()
+        opt.load_model_path = get_lastest_model(prefix=opt.model)
     if opt.load_model_path:
         print("Resuming from "+opt.load_model_path)
         model.load_state_dict(torch.load(opt.load_model_path))
-    model.to(opt.device)
+    if torch.cuda.device_count() > 1:
+        model = torch.nn.DataParallel(model).cuda()
+    else:
+        model.to(opt.device)
     model.train()
     # step2: data
     dataset = getattr(datasets,opt.dataset)
     train_data = dataset(opt.train_data_root,train=True)
     val_data = dataset(opt.train_data_root,train=False)
-    train_dataloader = DataLoader(train_data,opt.batch_size,
+    train_dataloader = DataLoader(train_data,opt.batch_size,pin_memory=True,
                         shuffle=True,num_workers=opt.num_workers)
-    val_dataloader = DataLoader(val_data,opt.batch_size,
+    val_dataloader = DataLoader(val_data,opt.batch_size,pin_memory=True,
                         shuffle=False,num_workers=opt.num_workers)
     
     # step3: criterion and optimizer
-    criterion = torch.nn.CrossEntropyLoss()
+    #criterion = torch.nn.CrossEntropyLoss()
+    criterion = FocalLoss(gamma=2.0)
     lr = opt.lr
     optimizer = torch.optim.Adam(model.parameters(),opt.lr,weight_decay=opt.weight_decay)
     # step4: meters
@@ -74,12 +79,12 @@ def train(args):
             prefix = 'checkpoints/' + opt.model + '_'+"{acc:.2f}".format(acc=val_accuracy)
             name = time.strftime(prefix + '_%m%d_%H:%M:%S.pth')
             torch.save(model.state_dict(),name)
-        print("{epoch}: Acc:{acc},loss:{loss},lr:{lr}".format(epoch = epoch,acc=val_accuracy,loss = loss_meter.value()[0],lr=lr))
-        print("confusion_matrix:")
-        print("{val_cm}".format(val_cm = str(val_cm.value())))
+        print("Val {epoch}: Loss: {loss},Acc: {acc},lr: {lr}".format(epoch = epoch,acc=val_accuracy,loss = loss_meter.value()[0],lr=lr))
+        #print("confusion_matrix:{val_cm}".format(val_cm = str(val_cm.value())))
         # update learning rate
-        if loss_meter.value()[0] > previous_loss:          
-            lr = lr * opt.lr_decay
+        if loss_meter.value()[0] > previous_loss:
+            if lr > 1e-5:         
+                lr = lr * opt.lr_decay
             for param_group in optimizer.param_groups:
                 param_group['lr'] = lr
         previous_loss = loss_meter.value()[0]

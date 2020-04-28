@@ -10,14 +10,15 @@ class ResNet(nn.Module):
         model = models.resnet50(pretrained=True)
         for param in model.parameters():
             param.requires_grad = False
-        model.fc = nn.Linear(2048,2)
+        model.fc = nn.Linear(model.fc.in_features,num_classes)
         self.model = model
         
     def forward(self,x):
         return self.model(x)
 
 if __name__=="__main__":
-    mrnet = ResNet()
+    net = ResNet()
     device = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
-    mrnet.to(device)
-    print(summary(mrnet,(3,224,224)))
+    net.to(device)
+    #print(net)
+    print(summary(net,(3,224,224)))
