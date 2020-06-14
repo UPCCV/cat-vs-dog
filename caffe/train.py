@@ -3,7 +3,7 @@ import platform,sys
 if platform.system()=="Windows":
     caffe_root = 'D:/CNN/caffe'
 else:
-    caffe_root = '/home/yanyu/CNN/caffe'
+    caffe_root = '~/CNN/caffe'
 sys.path.insert(0, caffe_root + '/python')
 from caffe import layers as L,params as P,to_proto
 from caffe.proto import caffe_pb2

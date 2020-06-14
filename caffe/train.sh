@@ -1,8 +1,8 @@
 #!/usr/bin/env sh
 set -e
-RESUME=1
-RESUME_ITER=10000
-TOOLS=/home/yanyu/CNN/caffe/build/tools
+RESUME=0
+RESUME_ITER=1000000
+TOOLS=~/CNN/caffe/build/tools
 MODEL=AlexNet
 #AlexNet
 #BN-GoogleNet
@@ -16,7 +16,7 @@ MODEL=AlexNet
 #GoogleNet
 
 #resumemodel="/home/yanyu/CNN/caffe/models/bvlc_alexnet/bvlc_alexnet.caffemodel"
-resumemodel="/home/yanyu/CNN/caffe/models/AlexNet_BN/AlexNet_BN.caffemodel"
+#resumemodel="/home/yanyu/CNN/caffe/models/AlexNet_BN/AlexNet_BN.caffemodel"
 #resumemodel="/home/yanyu/CNN/caffe/models/SqueezeNet/SqueezeNet_v1.1/squeezenet_v1.1.caffemodel"
 #resumemodel="/home/yanyu/CNN/caffe/models/VGG16/VGG_ILSVRC_16_layers.caffemodel"
 #resumemodel="/home/yanyu/CNN/caffe/models/VGG19/VGG_ILSVRC_19_layers.caffemodel"

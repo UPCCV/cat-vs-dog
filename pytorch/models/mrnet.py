@@ -1,21 +1,19 @@
 from torch import nn
-from torchsummary import summary
 import torch
 import math
 import torch.nn.functional as F
-
 class MRNet(nn.Module):
 
     def __init__(self, num_classes = 2):
         super(MRNet,self).__init__()
         self.model_name = "MRNet"
         self.conv1 = nn.Conv2d(3,6,3)
-        self.conv2 = nn.Conv2d(6,16,3)
-        self.conv3 = nn.Conv2d(16,24,3)
-        self.conv4 = nn.Conv2d(24,32,3)
-        self.conv5 = nn.Conv2d(32,64,3)
-        self.conv6 = nn.Conv2d(64,128,3)
-        self.fc = nn.Linear(128,num_classes)
+        self.conv2 = nn.Conv2d(self.conv1.out_channels,16,3)
+        self.conv3 = nn.Conv2d(self.conv2.out_channels,24,3)
+        self.conv4 = nn.Conv2d(self.conv3.out_channels,32,3)
+        self.conv5 = nn.Conv2d(self.conv4.out_channels,64,3)
+        self.conv6 = nn.Conv2d(self.conv5.out_channels,128,3)
+        self.fc = nn.Linear(self.conv6.out_channels,num_classes)
     
     def forward(self,x):
         x = F.max_pool2d(F.relu(self.conv1(x)),2)
@@ -39,4 +37,6 @@ if __name__=="__main__":
     net = MRNet()
     device = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
     net.to(device)
+    from torchsummary import summary
     print(summary(net,(3,224,224)))
+    dummy_input = torch.rand(1,3,224,224).to(device)

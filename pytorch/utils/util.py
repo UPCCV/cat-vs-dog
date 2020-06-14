@@ -18,20 +18,27 @@ def accuracy(y_pred, y_actual, topk=(1, )):
 
     return res
 
-def get_lastest_model(modeldir="checkpoints"):
+def get_lastest_model(modeldir="output",prefix="MnasNet"):
     files = os.listdir(modeldir)
     if len(files)==0:
         return None
+    files = list(filter(lambda x: x.startswith(prefix),files))
     files.sort(key=lambda fn:os.path.getmtime(modeldir + "/" + fn))
-    lastest = os.path.join(modeldir,files[-1])
+    if len(files) > 0:
+        lastest = os.path.join(modeldir,files[-1])
+    else:
+        lastest = None
     return lastest
 
 def get_args():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--model",type=str,default="MnasNet",choices=["MRNet","AlexNet","ResNet50","SqueezeNet","MnasNet"])
+    parser.add_argument("--model",type=str,default="ShuffleNet",choices=["MRNet","AlexNet","ResNet50","SqueezeNet","MnasNet","ShuffleNet"])
     parser.add_argument("--batch_size",type=int,default=64)
-    parser.add_argument("--num_workers",type=int,default=8)
+    parser.add_argument("--num_workers",type=int,default=40)
     parser.add_argument("--load_model_path",type=str,default=None)
+    # for demo
+    parser.add_argument("--image_dir",type=str,default="data/dogcat/test1")
+    parser.add_argument("--image_path",type=str,default="data/dogcat/test1/1.jpg")
     return parser.parse_args()
 
 if __name__=="__main__":
