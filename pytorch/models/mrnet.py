@@ -3,6 +3,7 @@ from torchsummary import summary
 import torch
 import math
 import torch.nn.functional as F
+from tensorboardX import SummaryWriter
 
 class MRNet(nn.Module):
 
@@ -40,3 +41,6 @@ if __name__=="__main__":
     device = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
     net.to(device)
     print(summary(net,(3,224,224)))
+    dummy_input = torch.rand(1,3,224,224).to(device)
+    with SummaryWriter(comment="mrnet") as w:
+        w.add_graph(net,(dummy_input,))

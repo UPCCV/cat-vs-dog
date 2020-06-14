@@ -7,3 +7,9 @@ Keras/errors/*
 pytorch/.vscode/
 
 *.pyc
+bak
+caffe/lmdb
+*.caffemodel
+tensorflow/graph
+tensorflow/models/
+*.npy

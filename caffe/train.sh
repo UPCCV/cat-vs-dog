@@ -2,7 +2,7 @@
 set -e
 RESUME=1
 RESUME_ITER=10000
-TOOLS=/home/yanyu/CNN/caffe/build/tools
+TOOLS~/CNN/caffe/build/tools
 MODEL=AlexNet
 #AlexNet
 #BN-GoogleNet

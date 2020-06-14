@@ -1,4 +1,5 @@
-Torch
+torch
 torchvision
-visdom
+torchnet
+torchsummary
 tqdm

@@ -5,7 +5,13 @@ import time
 import torch
 from torch.utils.data import DataLoader
 from torchnet import meter
-from tqdm import tqdm
+import sys
+if sys.stderr.isatty():
+    from tqdm import tqdm
+else:
+    def tqdm(iterable,**kwargs):
+        return iterable
+import logging
 import datasets
 import models
 from utils.util import accuracy,get_lastest_model,get_args
@@ -18,7 +24,6 @@ def train(args):
         "batch_size":args.batch_size,"load_model_path":args.load_model_path}
     opt.parse(new_config)
     # step1:model
-    print(opt.model)
     model = getattr(models,opt.model)()
     if opt.load_model_path is None:
         opt.load_model_path = get_lastest_model(prefix=opt.model)
@@ -56,8 +61,10 @@ def train(args):
         loss_meter.reset()
         acc_meter.reset()
         confusion_matrix.reset()
+        nIters = len(train_dataloader)
         pbar = tqdm(train_dataloader)
-        for _,(data,label) in enumerate(pbar):
+        start = time.time()
+        for iter,(data,label) in enumerate(pbar):
             # train model 
             input = data.to(opt.device)
             target = label.to(opt.device)
@@ -70,9 +77,18 @@ def train(args):
             # meters update
             loss_meter.add(loss.item())
             acc_meter.add(prec1[0].item())
-            confusion_matrix.add(y_pred.detach(), target.detach()) 
-            pbar.set_description("{epoch}: Loss:{loss.val:.5f} Acc:{acc.val:.3f}".format(epoch=epoch,loss=loss_meter, acc=acc_meter))
+            confusion_matrix.add(y_pred.detach(), target.detach())
+            if sys.stderr.isatty():
+                log_str = "{epoch}: Loss:{loss.val:.5f} Acc:{acc.val:.3f}".format(epoch=epoch,loss=loss_meter, acc=acc_meter)
+                pbar.set_description(log_str)
+            else:
+                if iter%opt.print_freq == 0:
+                    log_str = "{iter}/{len}: Loss:{loss.val:.5f} Acc:{acc.val:.3f}".format(iter=iter,len=nIters,loss=loss_meter, acc=acc_meter)
+                    print(log_str)
         # validate and visualize
+        end = time.time()
+        if not sys.stderr.isatty():
+            print(str(epoch)+": time "+str(end-start)+"s")
         val_cm,val_accuracy = val(model,val_dataloader)
         if val_accuracy > best_acc:
             best_acc =val_accuracy

@@ -5,7 +5,6 @@ from torch.utils import data
 import numpy as np
 from torchvision import transforms as T
 
-
 class DogCat(data.Dataset):
 
     def __init__(self, root, transforms=None, train=True, test=False):
@@ -42,9 +41,11 @@ class DogCat(data.Dataset):
                 ])
             else:
                 self.transforms = T.Compose([
+                    T.RandomRotation(30),
                     T.Resize(256),
                     T.RandomResizedCrop(224),
                     T.RandomHorizontalFlip(),
+                    T.ColorJitter(brightness=0.2,contrast=0.3,hue=0.5),
                     T.ToTensor(),
                     normalize
                 ])
