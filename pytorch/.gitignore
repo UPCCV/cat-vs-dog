@@ -1,0 +1,9 @@
+log
+logs
+data
+checkpoints
+output
+*.pyc
+config.ini
+job.sh
+run.sh

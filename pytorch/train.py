@@ -5,31 +5,39 @@ import time
 import torch
 from torch.utils.data import DataLoader
 from torchnet import meter
-from tqdm import tqdm
+import sys
+if sys.stderr.isatty():
+    from tqdm import tqdm
+else:
+    def tqdm(iterable,**kwargs):
+        return iterable
+import logging
 import datasets
 import models
 from utils.util import accuracy,get_lastest_model,get_args
 from utils.config import opt
 from utils.focalloss import FocalLoss
 
+def create_logger(logdir="output"):
+    time_str = time.strftime('%Y%m%d-%H%M%S')
+    log_file = '{}/{}.log'.format(logdir, time_str)
+    head = '%(asctime)-15s %(message)s'
+    logging.basicConfig(filename=str(log_file),
+                        format=head)
+    logger = logging.getLogger()
+    logger.setLevel(logging.INFO)
+    console = logging.StreamHandler()
+    logging.getLogger('').addHandler(console)
+
 def train(args):
     # step0: parse config
+    best_acc = 0
     new_config ={"model":args.model,"num_workers":args.num_workers,
         "batch_size":args.batch_size,"load_model_path":args.load_model_path}
     opt.parse(new_config)
     # step1:model
-    print(opt.model)
     model = getattr(models,opt.model)()
-    if opt.load_model_path is None:
-        opt.load_model_path = get_lastest_model(prefix=opt.model)
-    if opt.load_model_path:
-        print("Resuming from "+opt.load_model_path)
-        model.load_state_dict(torch.load(opt.load_model_path))
-    if torch.cuda.device_count() > 1:
-        model = torch.nn.DataParallel(model).cuda()
-    else:
-        model.to(opt.device)
-    model.train()
+
     # step2: data
     dataset = getattr(datasets,opt.dataset)
     train_data = dataset(opt.train_data_root,train=True)
@@ -38,7 +46,6 @@ def train(args):
                         shuffle=True,num_workers=opt.num_workers)
     val_dataloader = DataLoader(val_data,opt.batch_size,pin_memory=True,
                         shuffle=False,num_workers=opt.num_workers)
-    
     # step3: criterion and optimizer
     #criterion = torch.nn.CrossEntropyLoss()
     criterion = FocalLoss(gamma=2.0)
@@ -49,15 +56,28 @@ def train(args):
     acc_meter = meter.AverageValueMeter()
     confusion_matrix = meter.ConfusionMeter(2)
     previous_loss = 1e10
-    best_acc = 0
-
+    if opt.load_model_path is None:
+        opt.load_model_path = get_lastest_model(prefix=opt.model)
+    if torch.cuda.device_count() > 1:
+        model = torch.nn.DataParallel(model).cuda()
+    else:
+        model.to(opt.device)
+    if opt.load_model_path:
+        model.load_state_dict(torch.load(opt.load_model_path))
+        model.eval()
+        _,best_acc = val(model,val_dataloader)
+        logging.info("Resuming from "+opt.load_model_path+" with acc: "+str(best_acc))
+    prefix = 'output/' + opt.model
     # train
     for epoch in range(opt.max_epoch):
+        model.train()
         loss_meter.reset()
         acc_meter.reset()
         confusion_matrix.reset()
+        nIters = len(train_dataloader)
         pbar = tqdm(train_dataloader)
-        for _,(data,label) in enumerate(pbar):
+        start = time.time()
+        for iter,(data,label) in enumerate(pbar):
             # train model 
             input = data.to(opt.device)
             target = label.to(opt.device)
@@ -70,17 +90,28 @@ def train(args):
             # meters update
             loss_meter.add(loss.item())
             acc_meter.add(prec1[0].item())
-            confusion_matrix.add(y_pred.detach(), target.detach()) 
-            pbar.set_description("{epoch}: Loss:{loss.val:.5f} Acc:{acc.val:.3f}".format(epoch=epoch,loss=loss_meter, acc=acc_meter))
+            confusion_matrix.add(y_pred.detach(), target.detach())
+            if sys.stderr.isatty():
+                log_str = "{epoch}: Loss:{loss.val:.5f} Acc:{acc.val:.3f}".format(epoch=epoch,loss=loss_meter, acc=acc_meter)
+                pbar.set_description(log_str)
+            else:
+                if iter%opt.print_freq == 0:
+                    log_str = "{iter}/{len}: Loss:{loss.val:.5f} Acc:{acc.val:.3f}".format(iter=iter,len=nIters,loss=loss_meter, acc=acc_meter)
+                    logging.info(log_str)
+        logging.info(log_str)
         # validate and visualize
+        end = time.time()
+        if not sys.stderr.isatty():
+            logging.info(str(epoch)+": time "+str(end-start)+"s")
         val_cm,val_accuracy = val(model,val_dataloader)
         if val_accuracy > best_acc:
             best_acc =val_accuracy
-            prefix = 'checkpoints/' + opt.model + '_'+"{acc:.2f}".format(acc=val_accuracy)
-            name = time.strftime(prefix + '_%m%d_%H:%M:%S.pth')
+            #name = time.strftime(prefix + '_%m%d_%H:%M:%S.pth')
+            name = prefix+"_best.pth"
             torch.save(model.state_dict(),name)
-        print("Val {epoch}: Loss: {loss},Acc: {acc},lr: {lr}".format(epoch = epoch,acc=val_accuracy,loss = loss_meter.value()[0],lr=lr))
-        #print("confusion_matrix:{val_cm}".format(val_cm = str(val_cm.value())))
+        torch.save(model.state_dict(),prefix+"_last.pth")
+        logging.info("Val {epoch}: Loss: {loss},Acc: {acc},lr: {lr}".format(epoch = epoch,acc=val_accuracy,loss = loss_meter.value()[0],lr=lr))
+        #logging.info("confusion_matrix:{val_cm}".format(val_cm = str(val_cm.value())))
         # update learning rate
         if loss_meter.value()[0] > previous_loss:
             if lr > 1e-5:         
@@ -104,4 +135,5 @@ def val(model,dataloader):
 
 if __name__=='__main__':
     args = get_args()
+    create_logger()
     train(args)

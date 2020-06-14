@@ -1,7 +1,6 @@
 from torch import nn
 import torchvision.models as models
 import torch
-from torchsummary import summary
 
 class SqueezeNet(nn.Module):
     def __init__(self,num_classes=2):
@@ -19,4 +18,5 @@ if __name__=="__main__":
     net = SqueezeNet()
     device = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
     net.to(device)
+    from torchsummary import summary
     print(summary(net,(3,224,224)))
