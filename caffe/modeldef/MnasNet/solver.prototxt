@@ -1,0 +1,21 @@
+train_net: "modeldef/MnasNet/train.prototxt"
+test_net: "modeldef/MnasNet/test.prototxt"
+test_iter: 25
+test_interval: 500
+base_lr: 0.01
+display: 100
+max_iter: 64000
+lr_policy: "multistep"
+gamma: 0.1
+momentum: 0.9
+weight_decay: 0.0005
+stepsize: 20000
+snapshot: 1000
+snapshot_prefix:"trainedmodels/MnasNet"
+solver_mode: GPU
+random_seed: 831486
+stepvalue: 32000
+stepvalue: 48000
+stepvalue: 60000
+iter_size: 8
+type: "Nesterov"
