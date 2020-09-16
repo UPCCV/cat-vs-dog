@@ -1,7 +1,7 @@
 # coding:utf8
 import warnings
 import torch
-
+import logging
 class DefaultConfig(object):
     env = 'default'  # visdom 环境
     vis_port = 8097 # visdom 端口
@@ -30,9 +30,8 @@ class DefaultConfig(object):
                 warnings.warn("Warning: opt has not attribut %s" % k)
             setattr(self, k, v)
         self.device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
-        print('user config:')
         for k, v in self.__class__.__dict__.items():
             if not k.startswith('_'):
-                print(k, getattr(self, k))
+                logging.info(str(k)+":"+str(getattr(self, k)))
                 
 opt = DefaultConfig()

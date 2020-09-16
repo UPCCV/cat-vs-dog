@@ -18,7 +18,7 @@ def accuracy(y_pred, y_actual, topk=(1, )):
 
     return res
 
-def get_lastest_model(modeldir="checkpoints",prefix="MnasNet"):
+def get_lastest_model(modeldir="output",prefix="MnasNet"):
     files = os.listdir(modeldir)
     if len(files)==0:
         return None
@@ -32,7 +32,7 @@ def get_lastest_model(modeldir="checkpoints",prefix="MnasNet"):
 
 def get_args():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--model",type=str,default="MnasNet",choices=["MRNet","AlexNet","ResNet50","SqueezeNet","MnasNet"])
+    parser.add_argument("--model",type=str,default="ShuffleNet",choices=["MRNet","AlexNet","ResNet50","SqueezeNet","MnasNet","ShuffleNet"])
     parser.add_argument("--batch_size",type=int,default=64)
     parser.add_argument("--num_workers",type=int,default=40)
     parser.add_argument("--load_model_path",type=str,default=None)

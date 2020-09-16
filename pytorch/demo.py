@@ -52,7 +52,7 @@ def demo():
         return
     model.load_state_dict(torch.load(args.load_model_path,map_location=torch.device('cpu')))
     device = torch.device('cpu')
-    if torch.cuda.is_available() and args.use_gpu:
+    if torch.cuda.is_available():
         device = torch.device('cuda')
     model.to(device)
     model.eval()

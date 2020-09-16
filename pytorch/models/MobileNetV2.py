@@ -1,7 +1,6 @@
 import torch
 import torch.nn as nn
 import math
-from torchsummary import summary
 
 __all__ = ['MobileNetV2', 'mobilenetv2_19']
 
@@ -123,4 +122,5 @@ if __name__=="__main__":
     net = mobilenetv2_5(num_classes=2)
     device = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
     net.to(device)
+    from torchsummary import summary
     print(summary(net,(3,224,224)))

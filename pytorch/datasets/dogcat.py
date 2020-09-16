@@ -4,7 +4,7 @@ from PIL import Image
 from torch.utils import data
 import numpy as np
 from torchvision import transforms as T
-
+import logging
 class DogCat(data.Dataset):
 
     def __init__(self, root, transforms=None, train=True, test=False):
@@ -20,14 +20,14 @@ class DogCat(data.Dataset):
             imgs = sorted(imgs, key=lambda x: int(x.split('.')[-2]))
 
         imgs_num = len(imgs)
-
+        
         if self.test:
             self.imgs = imgs
         elif train:
             self.imgs = imgs[:int(0.9 * imgs_num)]
         else:
             self.imgs = imgs[int(0.9 * imgs_num):]
-
+        logging.info("Loading "+str(len(self.imgs))+" images from "+root)
         if transforms is None:
             normalize = T.Normalize(mean=[0.485, 0.456, 0.406],
                                     std=[0.229, 0.224, 0.225])
