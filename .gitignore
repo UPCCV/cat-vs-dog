@@ -3,7 +3,7 @@
 data/
 bak
 caffe/lmdb
-*.caffemodel
+caffe/trainedmodels
 web/uploads/*.jpg
 Keras/logs/*
 Keras/errors/*
@@ -12,3 +12,4 @@ tensorflow/models/
 *.h5
 *.npy
 *.pyc
+*.caffemodel

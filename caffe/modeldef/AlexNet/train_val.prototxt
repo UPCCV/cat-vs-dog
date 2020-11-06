@@ -371,9 +371,6 @@ layer {
   bottom: "fc8_new"
   bottom: "label"
   top: "accuracy"
-  include {
-    phase: TEST
-  }
 }
 layer {
   name: "loss"
