@@ -5,6 +5,7 @@ from torch.utils import data
 import numpy as np
 from torchvision import transforms as T
 import logging
+
 class DogCat(data.Dataset):
 
     def __init__(self, root, transforms=None, train=True, test=False):

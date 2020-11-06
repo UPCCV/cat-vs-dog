@@ -1,6 +1,7 @@
 import torch
 from torch import nn
 import torchvision.models as models
+
 class AlexNet(nn.Module):
     def __init__(self,num_classes=2):
         super(AlexNet,self).__init__()
@@ -19,4 +20,8 @@ if __name__=="__main__":
     device = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
     net.to(device)
     from torchsummary import summary
+<<<<<<< HEAD
     print(summary(net,(3,224,224)))
+=======
+    print(summary(net,(3,224,224)))
+>>>>>>> df55394a74005d3d1b17654c1b4d31c41d4e2bb6

@@ -39,4 +39,8 @@ if __name__=="__main__":
     net.to(device)
     from torchsummary import summary
     print(summary(net,(3,224,224)))
+<<<<<<< HEAD
     dummy_input = torch.rand(1,3,224,224).to(device)
+=======
+    dummy_input = torch.rand(1,3,224,224).to(device)
+>>>>>>> df55394a74005d3d1b17654c1b4d31c41d4e2bb6
